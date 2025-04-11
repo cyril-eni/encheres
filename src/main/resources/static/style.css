@@ -81,6 +81,12 @@ main.flex-center{
 /**********************
 ***** Article *********
 ***********************/
+
+img.enchere-image{
+    width: 300px;
+    max-width: 100%;
+}
+
 .list-articles{
     list-style: none;
     display: flex;

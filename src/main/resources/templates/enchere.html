@@ -10,46 +10,70 @@
     <h2 th:hidden="${article.noArticle}">Nouvelle vente</h2>
     <h2 th:text="${article.nomArticle}"  th:if="${article.noArticle}"></h2>
 
-    <img th:src="|/imagesArticles/${article.noArticle}|" th:if="${article.noArticle}" width="400px">
+    <img class="enchere-image" th:src="|/imagesArticles/${article.noArticle}|" th:if="${article.noArticle}">
 
 
 
-    <!--Je gère un formulaire pour "mapper" mes champs de saisi à l'objet film en modèle-->
+    <!--Je gère un formulaire pour "mapper" mes champs de saisi à l'objet article en modèle-->
     <form th:action="@{/ventes}" method="post" th:object="${article}" enctype="multipart/form-data">
 
-        <div class="form-element">
+        <!-- Nom -->
+        <div class="form-element" th:hidden="${article.noArticle}">
             <label>Nom</label>
-            <input th:field="*{nomArticle}"  th:hidden="${article.noArticle}">
+            <input th:field="*{nomArticle}"  >
         </div>
-        <div class="form-element">
+
+        <!-- Description -->
+        <div class="form-element"  >
             <label>Description</label>
-            <textarea th:text="${article.description}" th:field="*{description}" th:disabled="${article.noArticle}"></textarea>
+            <textarea  th:text="${article.description}" th:if="${article.noArticle == null}"></textarea>
+            <span th:text="${article.description}" th:field="*{description}" th:if="${article.noArticle}"></span>
         </div>
+
+
+        <!-- Categorie -->
         <div class="form-element">
-            <label>Categorie</label>
-            <select th:field="*{categorie}" th:disabled="${article.noArticle}">
+            <label>Catégorie</label>
+            <select th:field="*{categorie}" th:hidden="${article.noArticle}">
                 <option th:each="categorie : ${categories}" th:value="${categorie.noCategorie}" th:text="${categorie.libelle}"></option>
             </select>
+            <span  th:text="${article.categorie.libelle}" th:if="${article.noArticle}"></span>
         </div>
+
+        <!-- Photo -->
         <div class="form-element" th:hidden="${article.noArticle}">
             <label>Photo de l'article</label>
             <input type="file" th:field="*{image}" >
         </div>
+
+        <!-- Meilleure offre -->
+        <div class="form-element" th:if="${article.noArticle}">
+            <label>Meilleure offre</label>
+            <span  th:text="|${article.prixVente} pts par ${article.vendeur.pseudo}|" th:if="${article.noArticle}"></span>
+        </div>
+
+        <!-- Mise à Prix -->
         <div class="form-element">
             <label>Mise à Prix</label>
-            <input type="number"  th:field="*{miseAPrix}">
+            <input type="number"  th:field="*{miseAPrix}" th:hidden="${article.noArticle}">
+            <span  th:text="|${article.miseAPrix} points|" th:if="${article.noArticle}"></span>
         </div>
-        <div class="form-element">
+
+        <!-- Début enchère -->
+        <div class="form-element"  th:hidden="${article.noArticle}">
             <label>Date début enchère</label>
             <input type="date"  th:field="*{dateDebutEncheres}" value="2025-05-01">
         </div>
 
+        <!-- Fin enchère -->
         <div class="form-element">
-            <label>Date début enchère</label>
-            <input type="date"  th:field="*{dateFinEncheres}" value="2025-05-10">
+            <label>Date fin enchère</label>
+            <input type="date"  th:field="*{dateFinEncheres}"  th:hidden="${article.noArticle}">
+            <span th:text="|${#temporals.format(article.dateFinEncheres, 'dd/MM/yyyy')} |" th:if="${article.noArticle}"></span>
         </div>
 
-        <fieldset>
+        <!-- Retrait -->
+        <fieldset th:hidden="${article.noArticle}">
             <legend>Retrait</legend>
 
             <div class="form-element">
@@ -66,12 +90,30 @@
                 <label>Ville</label>
                 <input type="text"  value="ville test" th:field="*{retrait.ville}">
             </div>
-
         </fieldset>
 
-        <!-- on affiche le bouton de création que si le film n'a pas d'id-->
-        <div class="form-element" >
-            <button type="submit">Valider</button>
+        <div class="form-element" th:if="${article.noArticle}">
+            <label>Retrait</label>
+            <span th:text="|${article.retrait.rue}, ${article.retrait.codePostal} ${article.retrait.ville} |"></span>
+        </div>
+
+        <div class="form-element" th:if="${article.noArticle}">
+            <label>Vendeur</label>
+            <span th:text="${article.vendeur.pseudo}"></span>
+        </div>
+        <!-- on affiche le bouton de création que si l'article n'a pas d'id-->
+        <div class="form-element"  th:hidden="${article.noArticle}">
+            <button type="submit" >Valider</button>
+        </div>
+    </form>
+
+
+    <!-- Encherir sur la vente -->
+    <form th:action="@{|/ventes/${article.noArticle}/enchere|}" method="post" sec:authorize="isAuthenticated()">
+        <div class="form-element" th:if="${article.noArticle}" >
+            <label>Ma proposition</label>
+            <input type="number" name="montantEnchere" th:min="${article.prixVente + 1}" th:value="${article.prixVente + 1}">
+            <button type="submit" >Encherir</button>
         </div>
     </form>
 

@@ -13,7 +13,7 @@
 
     <ul class="list-articles">
         <li th:each="article : ${articles}">
-            <a th:href="@{|/encheres/${article.noArticle}|}">
+            <a th:href="@{|/ventes/${article.noArticle}|}">
                 <div class="article">
                     <img th:src="|/imagesArticles/${article.noArticle}|">
                     <section>

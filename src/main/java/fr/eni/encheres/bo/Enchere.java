@@ -14,12 +14,12 @@ import java.time.LocalDate;
 @IdClass(EncherePK.class)
 public class Enchere {
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "no_article")
     @Id
     private ArticleVendu articleVendu;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "no_utilisateur")
     @Id
     private Utilisateur utilisateur;
 

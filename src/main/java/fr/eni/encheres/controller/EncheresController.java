@@ -6,12 +6,12 @@ import fr.eni.encheres.bo.Enchere;
 import fr.eni.encheres.security.UtilisateurSpringSecurity;
 import fr.eni.encheres.service.ArticleService;
 import fr.eni.encheres.service.CategorieService;
+import fr.eni.encheres.service.UtilisateurService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,6 +32,9 @@ public class EncheresController {
 
     @Autowired
     private CategorieService categorieService;
+
+    @Autowired
+    private UtilisateurService utilisateurService;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -56,8 +59,6 @@ public class EncheresController {
     @GetMapping("/ventes/nouvelle")
     public String nouveleEnchere(Model model) {
         model.addAttribute("article", new ArticleVendu());
-        model.addAttribute("edit", true);
-
         // je redirige sur le template "enchere.html"
         return "enchere";
     }
@@ -84,7 +85,7 @@ public class EncheresController {
         Files.copy(file.getInputStream(), uploadPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
-    @GetMapping("/encheres/{id}")
+    @GetMapping("/ventes/{id}")
     public String recupererEnchere(@PathVariable int id, Model model) {
         // j'ajoute au modèle le film d'id correspondant
         model.addAttribute("article", articleService.consulterArticleVenduParId(id));
@@ -92,20 +93,17 @@ public class EncheresController {
     }
 
     @PostMapping("/ventes/{id}/enchere")
-    public String creerEnchere(int idArticle,  Integer montantEnchere, BindingResult result, @AuthenticationPrincipal UtilisateurSpringSecurity user) {
+    public String creerEnchere(@PathVariable int id,  Integer montantEnchere, @AuthenticationPrincipal UtilisateurSpringSecurity user) {
 
-        // Validation
-        if (result.hasErrors()) {
-            return "enchere";
-        }
-
-
-
-        ArticleVendu articleAssocie = articleService.consulterArticleVenduParId(idArticle);
+        ArticleVendu articleAssocie = articleService.consulterArticleVenduParId(id);
         Enchere enchere = new Enchere();
+        enchere.setArticleVendu(articleAssocie);
         enchere.setMontantEnchere(montantEnchere);
         enchere.setDateEnchere(LocalDate.now());
-        enchere.setUtilisateur(user.getUtilisateur());
+        enchere.setUtilisateur(utilisateurService.getUtilisateurByPseudo(user.getUtilisateur().getPseudo()));
+        articleService.creerEnchere(enchere);
+        articleAssocie.setPrixVente(enchere.getMontantEnchere());
+        articleService.creerArticleVendu(articleAssocie);
         // si création Ok, je redirige sur la page des films en GET
         return "redirect:/";
     }
