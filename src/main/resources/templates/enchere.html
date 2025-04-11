@@ -1,0 +1,81 @@
+<!--<!doctype html>-->
+<html lang="en" layout:decorate="~{fragments/layout}" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <title>Nouvelle vente</title>
+</head>
+<body>
+
+<!--contenu principal de notre page -->
+<main layout:fragment="content">
+    <h2 th:hidden="${article.noArticle}">Nouvelle vente</h2>
+    <h2 th:text="${article.nomArticle}"  th:if="${article.noArticle}"></h2>
+
+    <img th:src="|/imagesArticles/${article.noArticle}|" th:if="${article.noArticle}" width="400px">
+
+
+
+    <!--Je gère un formulaire pour "mapper" mes champs de saisi à l'objet film en modèle-->
+    <form th:action="@{/ventes}" method="post" th:object="${article}" enctype="multipart/form-data">
+
+        <div class="form-element">
+            <label>Nom</label>
+            <input th:field="*{nomArticle}"  th:hidden="${article.noArticle}">
+        </div>
+        <div class="form-element">
+            <label>Description</label>
+            <textarea th:text="${article.description}" th:field="*{description}" th:disabled="${article.noArticle}"></textarea>
+        </div>
+        <div class="form-element">
+            <label>Categorie</label>
+            <select th:field="*{categorie}" th:disabled="${article.noArticle}">
+                <option th:each="categorie : ${categories}" th:value="${categorie.noCategorie}" th:text="${categorie.libelle}"></option>
+            </select>
+        </div>
+        <div class="form-element" th:hidden="${article.noArticle}">
+            <label>Photo de l'article</label>
+            <input type="file" th:field="*{image}" >
+        </div>
+        <div class="form-element">
+            <label>Mise à Prix</label>
+            <input type="number"  th:field="*{miseAPrix}">
+        </div>
+        <div class="form-element">
+            <label>Date début enchère</label>
+            <input type="date"  th:field="*{dateDebutEncheres}" value="2025-05-01">
+        </div>
+
+        <div class="form-element">
+            <label>Date début enchère</label>
+            <input type="date"  th:field="*{dateFinEncheres}" value="2025-05-10">
+        </div>
+
+        <fieldset>
+            <legend>Retrait</legend>
+
+            <div class="form-element">
+                <label>Rue</label>
+                <input type="text" value="rue test" th:field="*{retrait.rue}">
+            </div>
+
+            <div class="form-element">
+                <label>CodePostal</label>
+                <input type="text" value="code Postal test" th:field="*{retrait.codePostal}">
+            </div>
+
+            <div class="form-element">
+                <label>Ville</label>
+                <input type="text"  value="ville test" th:field="*{retrait.ville}">
+            </div>
+
+        </fieldset>
+
+        <!-- on affiche le bouton de création que si le film n'a pas d'id-->
+        <div class="form-element" >
+            <button type="submit">Valider</button>
+        </div>
+    </form>
+
+</main>
+
+</body>
+</html>

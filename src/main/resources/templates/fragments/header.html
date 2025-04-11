@@ -1,0 +1,30 @@
+<!--entête de notre page (bandeau du haut)-->
+<header>
+    <!-- th:href="@{/}" : lien vers la racine de notre application (et pas de notre serveur)-->
+    <h2 id="titre">
+        <a th:href="@{/}">ENI Enchères</a>
+    </h2>
+
+    <!--liens de navigation de notre site-->
+    <nav>
+        <ul>
+            <li><a th:href="@{/}">Enchères</a></li>
+            <li>
+                <!-- sec:authorize="hasRole('admin') : on n'affiche ce lien que si l'utilisateur est connecté  -->
+                <a sec:authorize="isAuthenticated()" th:href="@{/ventes/nouvelle}">Vendre un article</a>
+            </li>
+        </ul>
+        <!-- on n'affiche cette section que pour les utilisateurs connectés -->
+        <section sec:authorize="isAuthenticated()">
+            <!-- on offre la possibilité de se déconnecter -->
+            <form th:action="@{/logout}" method="post">
+                <!-- ${#authentication.name}" : recupère le username de l'utilisateur connecté-->
+                <button th:text="|Déconnecter l'utilisateur : ${#authentication.name}|"></button>
+            </form>
+        </section>
+        <!-- on n'affiche cette section que pour les utilisateurs NON connectés -->
+        <section sec:authorize="!isAuthenticated()"> <span>Vous n'êtes pas connecté :</span>
+            <!-- on offre la possibilité de se connecter --> <a th:href="@{/login}">Se connecter</a>
+        </section>
+    </nav>
+</header>

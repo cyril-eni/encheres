@@ -1,0 +1,32 @@
+<!--<!doctype html>-->
+<html lang="en" layout:decorate="~{fragments/layout}" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <title>Enchères</title>
+</head>
+<body>
+
+<!--contenu principal de notre page -->
+<main layout:fragment="content">
+    <!-- j'utilise la traduction de mon fichier messages.properties (_en ou _fr en fonction des préférences du navigateur)-->
+    <h2>Liste des enchères</h2>
+
+    <ul class="list-articles">
+        <li th:each="article : ${articles}">
+            <a th:href="@{|/encheres/${article.noArticle}|}">
+                <div class="article">
+                    <img th:src="|/imagesArticles/${article.noArticle}|">
+                    <section>
+                        <span th:text="${article.nomArticle}"></span>
+                        <span th:text="|Prix : ${article.prixVente} points|"></span>
+                        <span th:text="|Fin de l'enchère : ${#temporals.format(article.dateFinEncheres, 'dd/MM/yyyy')} |"></span>
+                        <span th:text="|Vendeur : ${article.vendeur.pseudo}|"></span>
+                    </section>
+                </div>
+            </a>
+        </li>
+    </ul>
+</main>
+
+</body>
+</html>
