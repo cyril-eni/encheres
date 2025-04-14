@@ -48,6 +48,10 @@ public class ArticleVendu {
     @PrimaryKeyJoinColumn(name="noArticle")
     private Retrait retrait;
 
+    /**
+     * attribut transient qui n'est pas sauvegardé en base de donnée
+     * sert uniquement à passer l'image à travers la request POST lors de la création d'une vente
+     */
     @Transient
     private MultipartFile image;
 
