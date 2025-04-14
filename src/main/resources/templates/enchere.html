@@ -26,7 +26,7 @@
         <!-- Description -->
         <div class="form-element"  >
             <label>Description</label>
-            <textarea  th:text="${article.description}" th:if="${article.noArticle == null}"></textarea>
+            <textarea  th:field="*{description}"  th:text="${article.description}" th:if="${article.noArticle == null}"></textarea>
             <span th:text="${article.description}" th:field="*{description}" th:if="${article.noArticle}"></span>
         </div>
 
