@@ -52,7 +52,7 @@ dependencies {
 }
 
 springBoot {
-    mainClass = 'fr.eni.filmotheque.FilmothequeApplication'
+    mainClass = 'fr.eni.encheres.EncheresApplication'
 }
 
 jar {
